@@ -1,0 +1,25 @@
+{% extends 'main.html' %}
+
+{% block content %}
+<center>
+
+<h2>this is login page</h2>
+
+<form method="POST" class="login-form">
+    {% csrf_token %}
+
+    <label>username:</label>
+    <input type="text" name="uname">
+
+    <label>password:</label>
+    <input type="password" name="pasw">
+
+    <button type="submit">submit</button>
+
+    {% if error %}
+        <h3 style="color:red;">Invalid credentials !!</h3>
+    {% endif %}
+</form>
+
+</center>
+{% endblock %}

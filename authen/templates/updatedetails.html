@@ -1,0 +1,24 @@
+{% extends 'main.html' %}
+{% block content %}
+<center>
+<h2>this is logout page</h2>
+<form action="" method="POST"> 
+
+        {% csrf_token %}
+    <label for="">fisrt_name:</label>
+    <input type="text" value="fname" id="{{data.fname}}">
+
+    <label for="">lastt_name:</label>
+    <input type="text" value="lname" id="{{data.lname}}">
+
+    <label for="">email:</label>
+    <input type="email" value="email" id="{{data.email}}">
+
+    <label for="">username::</label>
+    <input type="text" value="uname" id="{{data.uname}}">
+
+    <button type="submit">submit</button>
+
+</form>
+</center>
+{% endblock %}
