@@ -3,13 +3,30 @@ from .models import Products
 from authen.models import CartModel
 from django.contrib.auth.decorators import login_required
 from django.db.models import Q
+from django.contrib.auth import authenticate, login
 
 
+# ✅ LOGIN VIEW
+def login_(request):
+    if request.method == 'POST':
+        username = request.POST.get('username')
+        password = request.POST.get('password')
+
+        user = authenticate(request, username=username, password=password)
+
+        if user is not None:
+            login(request, user)
+            return redirect('home')   # ✅ after login → home
+        else:
+            return render(request, 'login.html', {'error': 'Invalid credentials'})
+
+    return render(request, 'login.html')
+
+
+# ✅ HOME (PROTECTED)
+@login_required(login_url='login_')
 def home(request):
-    if request.user.is_authenticated:
-        cartproductscount = CartModel.objects.filter(host=request.user).count()
-    else:
-        cartproductscount = 0
+    cartproductscount = CartModel.objects.filter(host=request.user).count()
 
     nomatch = False
 
@@ -37,7 +54,8 @@ def home(request):
     })
 
 
-@login_required
+# ✅ ADD TO CART
+@login_required(login_url='login_')
 def addtocart(request, pk):
     product = Products.objects.get(id=pk)
 
@@ -59,6 +77,7 @@ def addtocart(request, pk):
     return redirect('home')
 
 
+# ✅ CART PAGE
 @login_required(login_url='login_')
 def cart(request):
     cartproducts = CartModel.objects.filter(host=request.user)
@@ -73,25 +92,29 @@ def cart(request):
     })
 
 
-@login_required
+# ✅ REMOVE ITEM
+@login_required(login_url='login_')
 def remove(request, pk):
     CartModel.objects.get(id=pk).delete()
     return redirect('cart')
 
-def add(request,pk):
-    cproduct=CartModel.objects.get(id=pk)
-    cproduct.quantity+=1
-    cproduct.totalprice+=cproduct.price
+
+# ✅ INCREASE QUANTITY
+@login_required(login_url='login_')
+def add(request, pk):
+    cproduct = CartModel.objects.get(id=pk)
+    cproduct.quantity += 1
+    cproduct.totalprice += cproduct.price
     cproduct.save()
     return redirect('cart')
 
-def sub(request,pk):
-    cproduct=CartModel.objects.get(id=pk)
-    if cproduct.quantity>1:
-        cproduct.quantity-=1
-        cproduct.totalprice-=cproduct.price
-        cproduct.save()
-    else:
+
+# ✅ DECREASE QUANTITY
+@login_required(login_url='login_')
+def sub(request, pk):
+    cproduct = CartModel.objects.get(id=pk)
+    if cproduct.quantity > 1:
+        cproduct.quantity -= 1
+        cproduct.totalprice -= cproduct.price
         cproduct.save()
     return redirect('cart')
-
