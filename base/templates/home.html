@@ -20,7 +20,7 @@
 <div class="products-container">
     {% for i in all_products %}
         <div class="product-card">
-            <img src="{{ i.pimage.url }}" alt="{{ i.pname }}">
+            <img src="https://django-ecommerce-ygrs.onrender.com{{ i.pimage.url }}" alt="{{ i.pname }}">
             <b>{{ i.pname }}</b>
             <p>{{ i.pdesc }}</p>
             <p>₹{{ i.price }}</p>
